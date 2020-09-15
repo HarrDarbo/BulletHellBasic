@@ -15,7 +15,7 @@ class Bullet(object):
     damage = 1
     type = 'none'
 
-    def __init__(self,x,y,dx,dy,ddx=None,ddy=None,lx=None,ly=None,type=None):
+    def __init__(self,x,y,dx,dy,ddx=None,ddy=None,lx=None,ly=None,type=None,damage=None):
         self.x = x
         self.y = y
         self.dx = dx
@@ -30,6 +30,10 @@ class Bullet(object):
             self.ly = ly
         if type:
             self.type = type
+            if type == 'player':
+                self.colour = 'green'
+        if damage:
+            self.damage = damage
 
     def step(self):
         self.x += self.dx
@@ -40,3 +44,14 @@ class Bullet(object):
             helper.endbullet(self)
         elif self.y > 1.25*helper.cleny or self.y < -0.25*helper.cleny:
             helper.endbullet(self)
+        self.checkhurt()
+
+    def checkhurt(self):
+        if self.type == 'player':
+            bltlist = helper.enemybullets
+        else:
+            bltlist = []
+        for bullet in bltlist:
+            if bullet.type != self.type and abs(bullet.x-self.x) <= self.lx*2 and abs(bullet.y-self.y) <= self.ly*2:
+                helper.endbullet(bullet)
+                helper.endbullet(self)
